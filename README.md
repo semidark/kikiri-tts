@@ -73,6 +73,39 @@ cd kokoro-deutsch
 uv sync
 ```
 
+## German Frontend
+
+This repository also contains `kokoro_de`, a small German frontend layer for Kokoro.
+
+- Adds a repository-local German normalization layer for dates, times, euro amounts, percentages, selected units, ordinals, and common TTS/ML acronyms
+- Keeps `espeak-de` as the default path and applies overrides only where needed
+- Improves span-based matching for real-world spellings such as multi-word names and symbol forms
+- Provides unit tests for the frontend layer
+
+Example:
+
+```python
+from kokoro_de import phonemize
+
+print(phonemize("Louis Vuitton auf Disney+"))
+```
+
+```python
+from kokoro_de.pipeline import KokoroDEPipeline
+
+pipeline = KokoroDEPipeline(lang_code="de", model=model)
+for result in pipeline("Prime Video läuft auf dem iPad.", voice="df_voice"):
+    audio = result.audio
+```
+
+Frontend tests:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+`KokoroDEPipeline` requires upstream `kokoro`. In a normal install it uses the published `kokoro` package; in a source checkout it can also fall back to the local `kokoro/` submodule.
+
 ## Repository Layout
 
 ```text
@@ -82,6 +115,8 @@ scripts/             # Dataset prep, voicepack extraction, inference testing
 configs/             # Training config(s)
 docs/                # Training guide, troubleshooting, architecture notes
 training/            # Local training artifacts metadata (audio excluded)
+kokoro_de/           # German frontend package
+tests/               # Frontend unit tests
 ```
 
 ## Contributing
