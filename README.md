@@ -1,5 +1,9 @@
 # kokoro-deutsch
 
+> [!NOTE]
+> Naming RFC in progress: this repository may be renamed to `kikiri-tts`.
+> Share feedback in Discussion #29: https://github.com/semidark/kokoro-deutsch/discussions/29
+
 Training recipe for fine-tuning [Kokoro-82M](https://github.com/hexgrad/kokoro) for German with a patched [StyleTTS2](https://github.com/yl4579/StyleTTS2) submodule.
 
 ## What This Is
