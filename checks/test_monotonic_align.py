@@ -1,6 +1,13 @@
+import os
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
 import torch
+
+_PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.append(str(_PROJECT_ROOT / "StyleTTS2"))
 
 from utils import maximum_path
 
