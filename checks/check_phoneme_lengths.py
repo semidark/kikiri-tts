@@ -1,14 +1,17 @@
 import os
+import sys
 from pathlib import Path
 
 import pytest
 import yaml
 
+_PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.append(str(_PROJECT_ROOT / "StyleTTS2"))
+
 from text_utils import TextCleaner
 
 
 LIMIT = 512
-_PROJECT_ROOT = Path(__file__).parent.parent
 _CONFIG_PATH = _PROJECT_ROOT / "configs" / "config_german_ft.yml"
 
 
@@ -16,10 +19,19 @@ def _load_target_files():
     with open(_CONFIG_PATH, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     data = cfg["data_params"]
+    
+    # Adjust paths to be relative to _PROJECT_ROOT
+    # The config paths like "../training/train_list.txt" are relative to the parent of _PROJECT_ROOT.
+    # We need them relative to _PROJECT_ROOT itself.
+    # So, we take the parts of the path after ".."
+    adjusted_train_data = Path(*Path(data["train_data"]).parts[1:])
+    adjusted_val_data = Path(*Path(data["val_data"]).parts[1:])
+    adjusted_ood_data = Path(*Path(data["OOD_data"]).parts[1:])
+
     return [
-        str(_PROJECT_ROOT / data["train_data"]),
-        str(_PROJECT_ROOT / data["val_data"]),
-        str(_PROJECT_ROOT / data["OOD_data"]),
+        str(_PROJECT_ROOT / adjusted_train_data),
+        str(_PROJECT_ROOT / adjusted_val_data),
+        str(_PROJECT_ROOT / adjusted_ood_data),
     ]
 
 
