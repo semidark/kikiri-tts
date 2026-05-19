@@ -116,20 +116,6 @@ optimizer_params:
   bert_lr: 0.00001                  # lower LR for PLBERT (mostly frozen knowledge)
   ft_lr: 0.0001                     # fine-tuning LR for acoustic modules
 
-# TODO: Remove this entire `training:` block — it is dead config.
-# Neither train_first.py nor train_second.py reads from config["training"].
-# All these values are read from the TOP LEVEL keys above.
-# See: https://github.com/semidark/kokoro-deutsch/issues/14
-training:
-  epochs: 10
-  batch_size: 4
-  save_freq: 2
-  log_interval: 10
-  eval_interval: 500
-  pretrained_model: "../training/kokoro_base.pth"
-  load_only_params: true
-  second_stage_load_pretrained: false
-
 # ── Pitch Extractor ──────────────────────────────────────────────────────────
 # StyleTTS2 uses JDC pitch extractor
 # If Utils/JDC/bst.t7 is not available, the training code falls back to other methods
