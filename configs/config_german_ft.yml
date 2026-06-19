@@ -119,7 +119,7 @@ optimizer_params:
 # TODO: Remove this entire `training:` block — it is dead config.
 # Neither train_first.py nor train_second.py reads from config["training"].
 # All these values are read from the TOP LEVEL keys above.
-# See: https://github.com/semidark/kokoro-deutsch/issues/14
+# See: https://github.com/semidark/kikiri-tts/issues/14
 training:
   epochs: 10
   batch_size: 4

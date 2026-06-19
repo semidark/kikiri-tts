@@ -29,13 +29,23 @@ Both are mandatory. `espeak-ng` drives the IPA phonemization (`misaki`). `libsnd
 
 ### Python Environment
 
-- Python: 3.10–3.13 (tested on 3.13.12; see `requires-python` in `pyproject.toml`)
+- Python: **3.10–3.12** (the `spacy` dependency only ships wheels up to cp312).
+  The repo pins `3.12` in `.python-version` so `uv` picks a working interpreter.
 - Package manager: `uv`
 
+This repo uses **git submodules** (`kokoro/` and `StyleTTS2/`). Clone with
+`--recurse-submodules` or those directories will be empty:
+
 ```bash
-git clone --recurse-submodules https://github.com/semidark/kokoro-deutsch
-cd kokoro-deutsch
+git clone --recurse-submodules https://github.com/semidark/kikiri-tts
+cd kikiri-tts
 uv sync
+```
+
+If you already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
 ```
 
 The training environment for StyleTTS2 is separate and uses a venv:

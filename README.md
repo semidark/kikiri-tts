@@ -1,7 +1,8 @@
-# kokoro-deutsch
+# kikiri-tts
 
 > [!NOTE]
-> Naming RFC in done: this repository was be renamed to `kikiri-tts`.
+> This repository was formerly named `kokoro-deutsch`. The Python package and the
+> published HuggingFace model still use the old `kokoro-deutsch` name.
 
 Training recipe for fine-tuning [Kokoro-82M](https://github.com/hexgrad/kokoro) for German with a patched [StyleTTS2](https://github.com/yl4579/StyleTTS2) submodule.
 
@@ -70,11 +71,19 @@ brew install espeak-ng libsndfile
 
 ### Clone
 
+> [!IMPORTANT]
+> The `kokoro/` and `StyleTTS2/` code lives in **git submodules**. Clone with
+> `--recurse-submodules`, or run `git submodule update --init --recursive` if
+> you already cloned without them — otherwise those directories will be empty.
+
 ```bash
-git clone --recurse-submodules https://github.com/semidark/kokoro-deutsch
-cd kokoro-deutsch
+git clone --recurse-submodules https://github.com/semidark/kikiri-tts
+cd kikiri-tts
 uv sync
 ```
+
+`uv sync` selects a compatible interpreter via the pinned `.python-version`
+(Python 3.12; see [Python version](docs/TRAINING_GUIDE.md#python-environment)).
 
 ## Repository Layout
 

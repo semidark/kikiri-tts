@@ -1,26 +1,27 @@
-# AGENTS.md — kokoro-deutsch
+# AGENTS.md — kikiri-tts
 
 ## Project Overview
 
-kokoro-deutsch is a training recipe for fine-tuning [Kokoro TTS](https://github.com/hexgrad/kokoro) (82M parameters, based on StyleTTS 2) for German. The project contains:
+kikiri-tts (formerly `kokoro-deutsch`; the Python package and published HuggingFace model retain the old name) is a training recipe for fine-tuning [Kokoro TTS](https://github.com/hexgrad/kokoro) (82M parameters, based on StyleTTS 2) for German. The project contains:
 
 - A forked `kokoro/` inference package as a git submodule (`semidark/kokoro`, branch `main`), with German language code support
 - A patched fork of `StyleTTS2/` as a git submodule (`semidark/StyleTTS2`, branch `main`)
 - Original scripts for dataset preparation, voicepack extraction, and inference testing
 - Training and troubleshooting docs split by purpose
 
-- **Primary language:** Python 3.10–3.13
+- **Primary language:** Python 3.10–3.12 (pinned via `.python-version`)
 - **Package manager:** `uv` (lockfile: `uv.lock`)
 - **Build backend:** hatchling
 - **License:** Apache 2.0
-- **Repository:** `https://github.com/semidark/kokoro-deutsch`
+- **Repository:** `https://github.com/semidark/kikiri-tts`
 
 ## Build & Install
 
 ```bash
-# Clone with submodules
-git clone --recurse-submodules https://github.com/semidark/kokoro-deutsch
-cd kokoro-deutsch
+# Clone with submodules (required: kokoro/ and StyleTTS2/ are git submodules)
+git clone --recurse-submodules https://github.com/semidark/kikiri-tts
+cd kikiri-tts
+# If already cloned without submodules: git submodule update --init --recursive
 
 # Install Python dependencies (use uv, not pip directly)
 uv sync

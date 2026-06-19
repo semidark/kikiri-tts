@@ -4,6 +4,29 @@ This document collects the critical training failures found during German Kokoro
 
 If you are looking for the step-by-step path, use `TRAINING_GUIDE.md`.
 
+## Setup / Environment
+
+### espeak data error: `Error processing file '.../phontab': No such file or directory`
+
+If German G2P fails on import or first synthesis with an error pointing at a
+`/home/runner/work/.../espeak-ng-data/phontab` path, the bundled
+`espeakng-loader` wheel is at fault: its prebuilt `libespeak-ng.so` has a
+CI build path compiled in and ignores the data path it is handed (see
+[espeakng-loader#5](https://github.com/thewh1teagle/espeakng-loader/issues/5)).
+
+Fix: install the system `espeak-ng` (already required) and point the bundled
+loader at it. Replace the two bundled artifacts in your venv with symlinks to
+the system install:
+
+```bash
+EL=$(uv run python -c 'import espeakng_loader, os; print(os.path.dirname(espeakng_loader.__file__))')
+ln -sf /usr/lib/x86_64-linux-gnu/libespeak-ng.so.1 "$EL/libespeak-ng.so"
+ln -sf /usr/lib/x86_64-linux-gnu/espeak-ng-data    "$EL/espeak-ng-data"
+```
+
+This lives inside `.venv`, so re-apply it after a fresh `uv sync`. Adjust the
+paths for your platform (e.g. `aarch64-linux-gnu`, or the `brew` prefix on macOS).
+
 ## Stage 2 Static Noise / Collapsed Style Encoder
 
 ### Symptoms
