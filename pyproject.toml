@@ -35,8 +35,8 @@ sources = ["kokoro"]
 only-packages = true
 
 [project.urls]
-Homepage = "https://github.com/semidark/kokoro-deutsch"
-Repository = "https://github.com/semidark/kokoro-deutsch"
+Homepage = "https://github.com/semidark/kikiri-tts"
+Repository = "https://github.com/semidark/kikiri-tts"
 Upstream = "https://github.com/hexgrad/kokoro"
 
 [tool.uv.sources]
