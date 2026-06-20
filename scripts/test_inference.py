@@ -85,6 +85,17 @@ TEST_SENTENCES = [
     "Das kostet genau einhundertdreiundzwanzig Millionen Euro.",
 ]
 
+# Pronunciation override test set — covers brand and technical term overrides
+OVERRIDE_TEST_CASES = [
+    ("Ich nutze GitHub und PyTorch.", ["github", "pytorch"]),
+    ("Lade die API oder ein JSON herunter.", ["api", "json"]),
+    ("Aktiviere CUDA auf deiner GPU.", ["cuda", "gpu"]),
+    ("Nutze Claude oder HuggingFace.", ["claude", "huggingface"]),
+    ("Füge einen Bindestrich in Disney+ oder espeak-ng ein.", ["disneyplus", "espeak-ng"]),
+    ("Die Symbiose und Synthese sind biologische Begriffe.", ["symbiose", "synthese"]),
+    ("Erstelle ein Zero-Shot Modell für maschinelles Lernen.", ["zero-shot"]),
+]
+
 
 def convert_checkpoint(checkpoint_path: str, output_path: str) -> str:
     """Convert a StyleTTS2 Stage 2 checkpoint to Kokoro KModel format.
@@ -127,6 +138,55 @@ def convert_checkpoint(checkpoint_path: str, output_path: str) -> str:
     return str(output)
 
 
+def check_frontend():
+    """Verify that German G2P overrides are loaded and correctly matched by the frontend pipeline.
+
+    This operates entirely on phonemes and requires no model or voicepack.
+    """
+    try:
+        from misaki.de import DEG2P, override_for
+    except ImportError:
+        print("ERROR: Could not import 'misaki.de'. Ensure misaki[de] is installed.")
+        sys.exit(1)
+
+    print("\n=== Running Frontend G2P Override Checks ===")
+    g2p = DEG2P()
+    failures = 0
+
+    for i, (sentence, keys) in enumerate(OVERRIDE_TEST_CASES):
+        # DEG2P returns (phonemes, tokens)
+        phonemes, _ = g2p(sentence)
+        print(f"[{i + 1}/{len(OVERRIDE_TEST_CASES)}] Text: '{sentence}'")
+        print(f"      Phonemes: '{phonemes}'")
+
+        case_failed = False
+        for key in keys:
+            expected_ipa = override_for(key)
+            if not expected_ipa:
+                print(f"  ❌ FAIL: Key '{key}' has no defined override in misaki.")
+                case_failed = True
+                continue
+
+            clean_phonemes = phonemes.replace(" ", "")
+            clean_expected = expected_ipa.replace(" ", "")
+            if clean_expected not in clean_phonemes:
+                print(f"  ❌ FAIL: Expected override '{key}' ('{expected_ipa}') not found in phonemes.")
+                case_failed = True
+            else:
+                print(f"  ✅ PASS: Found '{key}' ('{expected_ipa}')")
+
+        if case_failed:
+            failures += 1
+
+    print("=" * 44)
+    if failures == 0:
+        print("🎉 ALL FRONTEND OVERRIDE CHECKS PASSED!\n")
+        sys.exit(0)
+    else:
+        print(f"❌ {failures} FRONTEND OVERRIDE CHECKS FAILED.\n")
+        sys.exit(1)
+
+
 def run_inference(
     model_path: str,
     voicepack_path: str,
@@ -161,7 +221,7 @@ def run_inference(
     out.mkdir(parents=True, exist_ok=True)
 
     # Generate audio for each test sentence
-    print(f"\nGenerating {len(TEST_SENTENCES)} test sentences...\n")
+    print(f"\nGenerating {len(TEST_SENTENCES)} phonetic test sentences...\n")
     for i, text in enumerate(TEST_SENTENCES):
         print(f"[{i + 1}/{len(TEST_SENTENCES)}] {text[:60]}...")
         try:
@@ -176,6 +236,29 @@ def run_inference(
 
                 combined = np.concatenate(all_audio)
                 wav_path = out / f"test_{i + 1:02d}.wav"
+                sf.write(str(wav_path), combined, 24000)
+                duration = len(combined) / 24000
+                print(f"  saved: {wav_path} ({duration:.1f}s)")
+            else:
+                print(f"  WARNING: No audio generated")
+        except Exception as e:
+            print(f"  ERROR: {e}")
+
+    print(f"\nGenerating {len(OVERRIDE_TEST_CASES)} override test sentences...\n")
+    for i, (text, _) in enumerate(OVERRIDE_TEST_CASES):
+        print(f"[{i + 1}/{len(OVERRIDE_TEST_CASES)}] {text[:60]}...")
+        try:
+            generator = pipeline(text, voice=voice, speed=1)
+            all_audio = []
+            for gs, ps, audio in generator:
+                print(f"  phonemes: {ps[:60]}...")
+                all_audio.append(audio)
+
+            if all_audio:
+                import numpy as np
+
+                combined = np.concatenate(all_audio)
+                wav_path = out / f"override_{i + 1:02d}.wav"
                 sf.write(str(wav_path), combined, 24000)
                 duration = len(combined) / 24000
                 print(f"  saved: {wav_path} ({duration:.1f}s)")
@@ -225,8 +308,17 @@ def main():
         choices=["auto", "cpu", "cuda"],
         help="Device to run on (default: auto)",
     )
+    parser.add_argument(
+        "--check-frontend",
+        action="store_true",
+        help="Only run fast G2P frontend override verification checks, without generating audio",
+    )
 
     args = parser.parse_args()
+
+    if args.check_frontend:
+        check_frontend()
+        return
 
     # Resolve model path: convert checkpoint, use explicit model, or
     # fall back to the default reference model from HuggingFace.
