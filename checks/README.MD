@@ -1,5 +1,7 @@
-you need install pytest to use these
-pip install pytest
+Prerequisites:
+
+you need install pytest + pyyaml to use these
+pip install pytest pyyaml 
 
 then start by
 pytest check_phoneme_lengths.py -v

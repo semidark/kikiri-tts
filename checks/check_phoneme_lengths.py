@@ -11,7 +11,7 @@ sys.path.append(str(_PROJECT_ROOT / "StyleTTS2"))
 from text_utils import TextCleaner
 
 
-LIMIT = 512
+LIMIT = 510
 _CONFIG_PATH = _PROJECT_ROOT / "configs" / "config_german_ft.yml"
 
 
@@ -61,17 +61,17 @@ def collect_violations(file_path, limit=LIMIT):
 @pytest.mark.parametrize("file_path", TARGET_FILES)
 def test_no_phoneme_sequence_exceeds_bert_limit(file_path):
     if not os.path.exists(file_path):
-        pytest.skip(f"Datei nicht gefunden: {file_path}")
+        pytest.skip(f"File not found: {file_path}")
 
     violations = collect_violations(file_path)
 
     if violations:
         lines = "\n".join(
-            f"  Zeile {ln}: {length} Tokens — {path}"
+            f"  rows {ln}: {length} tokens — {path}"
             for ln, length, path in violations
         )
         pytest.fail(
-            f"{len(violations)} Zeile(n) in {file_path} überschreiten das BERT-Limit ({LIMIT}):\n{lines}"
+            f"{len(violations)} rows in {file_path} are larger than the BERT-Limit ({LIMIT}):\n{lines}"
         )
 
 
@@ -83,15 +83,15 @@ def test_no_phoneme_sequence_exceeds_bert_limit(file_path):
 if __name__ == "__main__":
     for file_path in TARGET_FILES:
         if not os.path.exists(file_path):
-            print(f"[-] Datei nicht gefunden: {file_path}")
+            print(f"[-] File not found: {file_path}")
             continue
-        print(f"[*] Prüfe Datei: {file_path}")
+        print(f"[*] checking file: {file_path}")
         violations = collect_violations(file_path)
         total = sum(1 for _ in open(file_path, encoding="utf-8"))
         if violations:
             for ln, length, path in violations:
-                print(f"    ! Zeile {ln}: {length} Tokens (Limit: {LIMIT})")
-                print(f"      Pfad: {path}")
-            print(f"[-] KRITISCH: {len(violations)} Zeile(n) werden BERT zum Absturz bringen!\n")
+                print(f"    ! Row {ln}: {length} Tokens (Limit: {LIMIT})")
+                print(f"      Path: {path}")
+            print(f"[-] CRITICAL: {len(violations)} rows will crash BERT!\n")
         else:
-            print(f"[+] Erfolg: Alle {total} Zeilen sind sicher ({LIMIT} Tokens).\n")
+            print(f"[+] Success: All {total} rows are safe ({LIMIT} token limit).\n")
