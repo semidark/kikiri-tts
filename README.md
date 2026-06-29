@@ -72,7 +72,7 @@ Click the links to hear speech demos directly from HuggingFace.
 | Voice | Speaker | Samples | License | Demo |
 |-------|---------|---------|---------|------|
 | **[kikiri-german-martin](https://huggingface.co/kikiri-tts/kikiri-german-martin)** | Martin Harbecke (male) | 627 | Apache 2.0 | [Speech Demo](https://huggingface.co/kikiri-tts/kikiri-german-martin/blob/main/README.md#demo) |
-| **[kikiri-german-victoria](https://huggingface.co/kikiri-tts/kikiri-german-victoria)** | Victoria Asztaller (female) | 455 | Apache 2.0 | [Speech Demo](https://huggingface.co/kikiri-tts/kikiri-german-martin/blob/main/README.md#demo) |
+| **[kikiri-german-victoria](https://huggingface.co/kikiri-tts/kikiri-german-victoria)** | Victoria Asztaller (female) | 455 | Apache 2.0 | [Speech Demo](https://huggingface.co/kikiri-tts/kikiri-german-victoria#demo) |
 
 *More voices and languages coming soon. Check the [kikiri-tts](https://huggingface.co/kikiri-tts) HuggingFace organization for updates.*
 
